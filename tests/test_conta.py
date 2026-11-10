@@ -95,10 +95,14 @@ def test_ciclo_4_lancamento_e_imutavel():
 
 
 # ==============================================================================
-# [PARTE 2 EM DIANTE] DEMAIS TESTES (SAQUE, VALIDAÇÕES E TRANSFERÊNCIA)
+# CICLO 5: Saque Válido - Redução do Saldo
+# Requisito PDF: "saque(int quantia) -> o saldo diminui em quantia"
+# [RED]      Testar saque após depósito prévio verificando redução do saldo
+# [GREEN]    Implementar novo_saldo = self._saldo - quantia
+# [REFACTOR] Assinatura e tipos explícitos
 # ==============================================================================
 
-def test_saque_altera_saldo_corretamente_apos_deposito():
+def test_ciclo_5_saque_altera_saldo_corretamente_apos_deposito():
     conta = Conta()
     conta.deposito(100)
 
@@ -107,14 +111,45 @@ def test_saque_altera_saldo_corretamente_apos_deposito():
     assert conta.saldo == 60
 
 
-def test_saque_cria_lancamento_correto_no_extrato():
+# ==============================================================================
+# CICLO 6: Saque Válido - Registro no Extrato (Ledger)
+# Requisito PDF: "lançamento com tipo 'SAQUE', valor quantia, saldo pós-operação"
+#                "A conta deve manter um histórico das operações na ordem"
+# [RED]      Testar se registro tipo 'SAQUE' foi adicionado mantendo a ordem
+# [GREEN]    Append de Lancamento("SAQUE", quantia, novo_saldo)
+# [REFACTOR] Reutilização de Lancamento imutável
+# ==============================================================================
+
+def test_ciclo_6_saque_cria_lancamento_correto_no_extrato():
     conta = Conta()
     conta.deposito(100)
 
     conta.saque(40)
 
-    assert conta.get_entradas()[-1] == Lancamento("SAQUE", 40, 60)
+    lancamento_saque = conta.get_entradas()[-1]
+    assert lancamento_saque == Lancamento("SAQUE", 40, 60)
+    assert lancamento_saque.tipo == "SAQUE"
+    assert lancamento_saque.valor == 40
+    assert lancamento_saque.saldo_apos_operacao == 60
 
+
+def test_ciclo_6_operacoes_mantem_ordem_no_extrato():
+    conta = Conta()
+    conta.deposito(100)
+    conta.saque(25)
+    conta.deposito(10)
+
+    assert [entrada.tipo for entrada in conta.get_entradas()] == [
+        "DEPOSITO", "SAQUE", "DEPOSITO"
+    ]
+    assert [entrada.saldo_apos_operacao for entrada in conta.get_entradas()] == [
+        100, 75, 85
+    ]
+
+
+# ==============================================================================
+# [PRÓXIMOS CICLOS] VALIDAÇÕES E TRANSFERÊNCIA
+# ==============================================================================
 
 @pytest.mark.parametrize("quantia", [0, -10])
 def test_deposito_com_quantia_invalida_lanca_excecao(quantia):
@@ -151,20 +186,6 @@ def test_saque_maior_que_saldo_nao_altera_estado():
 
     assert conta.saldo == 50
     assert conta.get_entradas() == extrato_anterior
-
-
-def test_operacoes_mantem_ordem_no_extrato():
-    conta = Conta()
-    conta.deposito(100)
-    conta.saque(25)
-    conta.deposito(10)
-
-    assert [entrada.tipo for entrada in conta.get_entradas()] == [
-        "DEPOSITO", "SAQUE", "DEPOSITO"
-    ]
-    assert [entrada.saldo_apos_operacao for entrada in conta.get_entradas()] == [
-        100, 75, 85
-    ]
 
 
 def test_transferencia_atualiza_as_duas_contas_e_os_extratos():

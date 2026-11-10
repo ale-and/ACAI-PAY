@@ -105,22 +105,35 @@ class Conta:
         )
 
     # --------------------------------------------------------------------------
-    # Operações seguintes (Saque e Transferência)
-    # (Serão demarcadas visualmente nos próximos passos)
+    # [CICLO 5 & CICLO 6] Operação de Saque
+    # Requisito 3 do PDF:
+    # - [CICLO 5] Diminuir saldo em quantia.
+    # - [CICLO 6] Adicionar lançamento ("SAQUE", quantia, saldo_apos_operacao).
     # --------------------------------------------------------------------------
     def saque(self, quantia: int) -> None:
-        """Saca uma quantia positiva, desde que haja saldo suficiente."""
+        """Saca uma quantia positiva e registra a operação no extrato."""
         self._validar_quantia(quantia)
 
         if quantia > self._saldo:
             raise ExcecaoConta("Saldo insuficiente.")
 
+        # [CICLO 5 - GREEN] Atualização do saldo
         novo_saldo = self._saldo - quantia
         self._saldo = novo_saldo
+
+        # [CICLO 6 - GREEN] Registro do lançamento no extrato
         self._entradas.append(
-            Lancamento("SAQUE", quantia, novo_saldo)
+            Lancamento(
+                tipo="SAQUE",
+                valor=quantia,
+                saldo_apos_operacao=novo_saldo
+            )
         )
 
+    # --------------------------------------------------------------------------
+    # Operações seguintes (Validações específicas e Transferência)
+    # (Serão demarcadas visualmente nos próximos ciclos)
+    # --------------------------------------------------------------------------
     def transferencia_para(self, outra: "Conta", quantia: int) -> None:
         """Transfere dinheiro para outra conta (bônus do exercício).
 
