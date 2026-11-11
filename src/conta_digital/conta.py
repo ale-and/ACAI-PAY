@@ -71,7 +71,10 @@ class Conta:
     getEntradas = get_entradas  # Alias para nome sugerido no PDF: getEntradas()
 
     # --------------------------------------------------------------------------
-    # Validações internas auxiliares
+    # [CICLO 7 & CICLO 8] Validação de Valores Inválidos (Requisito 5 do PDF)
+    # Requisito 5: Se quantia <= 0, a operação deve falhar lançando exceção.
+    # [CICLO 7 - REFACTOR] Validação unificada para garantir valores estritamente positivos.
+    # [CICLO 8 - REFACTOR] Reutilização da mesma regra para a operação de saque.
     # --------------------------------------------------------------------------
     @staticmethod
     def _validar_quantia(quantia: int) -> None:
@@ -89,7 +92,7 @@ class Conta:
     # --------------------------------------------------------------------------
     def deposito(self, quantia: int) -> None:
         """Deposita uma quantia positiva e registra a operação no extrato."""
-        self._validar_quantia(quantia)
+        self._validar_quantia(quantia)  # [CICLO 7 - GREEN] Valida quantia <= 0
 
         # [CICLO 3 - GREEN] Atualização de saldo
         novo_saldo = self._saldo + quantia
@@ -112,7 +115,7 @@ class Conta:
     # --------------------------------------------------------------------------
     def saque(self, quantia: int) -> None:
         """Saca uma quantia positiva e registra a operação no extrato."""
-        self._validar_quantia(quantia)
+        self._validar_quantia(quantia)  # [CICLO 8 - GREEN] Valida quantia <= 0
 
         if quantia > self._saldo:
             raise ExcecaoConta("Saldo insuficiente.")

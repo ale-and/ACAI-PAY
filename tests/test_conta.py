@@ -148,22 +148,35 @@ def test_ciclo_6_operacoes_mantem_ordem_no_extrato():
 
 
 # ==============================================================================
-# [PRÓXIMOS CICLOS] VALIDAÇÕES E TRANSFERÊNCIA
+# CICLO 7: Valores Inválidos no Depósito
+# Requisito PDF: "se quantia <= 0, a operação deve falhar lançando uma exceção"
+# [RED]      Testar depósito com valores <= 0 esperando ExcecaoConta sem efeito colateral
+# [GREEN]    Adicionar validação em deposito() levantando ExcecaoConta
+# [REFACTOR] Extrair validação para o método estático _validar_quantia
 # ==============================================================================
 
 @pytest.mark.parametrize("quantia", [0, -10])
-def test_deposito_com_quantia_invalida_lanca_excecao(quantia):
+def test_ciclo_7_deposito_com_quantia_invalida_lanca_excecao(quantia):
     conta = Conta()
 
     with pytest.raises(ExcecaoConta):
         conta.deposito(quantia)
 
+    # Garante ausência de efeitos colaterais
     assert conta.saldo == 0
     assert conta.get_entradas() == ()
 
 
+# ==============================================================================
+# CICLO 8: Valores Inválidos no Saque
+# Requisito PDF: "se quantia <= 0, a operação deve falhar lançando uma exceção"
+# [RED]      Testar saque com quantia <= 0 esperando ExcecaoConta sem alterar estado
+# [GREEN]    Aplicar _validar_quantia(quantia) em saque()
+# [REFACTOR] Unificação da regra de validação positiva
+# ==============================================================================
+
 @pytest.mark.parametrize("quantia", [0, -10])
-def test_saque_com_quantia_invalida_lanca_excecao(quantia):
+def test_ciclo_8_saque_com_quantia_invalida_lanca_excecao(quantia):
     conta = Conta()
     conta.deposito(100)
     saldo_anterior = conta.saldo
@@ -172,8 +185,14 @@ def test_saque_com_quantia_invalida_lanca_excecao(quantia):
     with pytest.raises(ExcecaoConta):
         conta.saque(quantia)
 
+    # Estado não pode ser alterado
     assert conta.saldo == saldo_anterior
     assert conta.get_entradas() == extrato_anterior
+
+
+# ==============================================================================
+# [PRÓXIMOS CICLOS] SALDO INSUFICIENTE E TRANSFERÊNCIA
+# ==============================================================================
 
 
 def test_saque_maior_que_saldo_nao_altera_estado():
