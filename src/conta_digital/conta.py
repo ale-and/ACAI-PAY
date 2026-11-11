@@ -135,17 +135,19 @@ class Conta:
         )
 
     # --------------------------------------------------------------------------
-    # Operações seguintes (Validações específicas e Transferência)
-    # (Serão demarcadas visualmente nos próximos ciclos)
+    # [CICLO 10 - BÔNUS] Transferência entre Contas
+    # Requisito BÔNUS do PDF:
+    # - transferenciaPara(Conta outra, int quantia)
+    # - Saldo da conta origem diminui, saldo da conta destino aumenta.
+    # - Origem registra 'SAQUE', destino registra 'DEPOSITO'.
+    # - Validações atômicas prévias: quantia > 0, saldo suficiente, conta válida
+    #   e não transferir para si mesmo (sem efeitos colaterais em caso de falha).
     # --------------------------------------------------------------------------
     def transferencia_para(self, outra: "Conta", quantia: int) -> None:
-        """Transfere dinheiro para outra conta (bônus do exercício).
-
-        As validações acontecem antes de qualquer alteração, evitando
-        efeitos colaterais quando a transferência falha.
-        """
+        """Transfere dinheiro para outra conta de forma atômica."""
         self._validar_quantia(quantia)
 
+        # [CICLO 10 - GREEN/REFACTOR] Validações de integridade
         if not isinstance(outra, Conta):
             raise ExcecaoConta("A conta de destino é inválida.")
         if outra is self:
@@ -153,6 +155,7 @@ class Conta:
         if quantia > self._saldo:
             raise ExcecaoConta("Saldo insuficiente.")
 
+        # [CICLO 10 - GREEN] Operação atômica em ambas as contas
         saldo_origem = self._saldo - quantia
         saldo_destino = outra._saldo + quantia
 
@@ -164,4 +167,4 @@ class Conta:
             Lancamento("DEPOSITO", quantia, saldo_destino)
         )
 
-    transferenciaPara = transferencia_para  # Alias sugerido no PDF
+    transferenciaPara = transferencia_para  # [CICLO 10 - REFACTOR] Alias citado no PDF

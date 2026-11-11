@@ -215,16 +215,24 @@ def test_ciclo_9_saque_maior_que_saldo_nao_altera_estado():
 
 
 # ==============================================================================
-# [PRÓXIMO CICLO] BÔNUS: TRANSFERÊNCIA ENTRE CONTAS
+# CICLO 10 (BÔNUS): Transferência entre Contas
+# Requisito PDF: "transferenciaPara(Conta outra, int quantia):
+#                 - saldo da conta origem diminui
+#                 - saldo da conta destino aumenta
+#                 - origem registra lançamento 'SAQUE'
+#                 - destino registra lançamento 'DEPOSITO'
+#                 - validações: quantia > 0, saldo suficiente, sem efeitos em falha"
+# [RED]      Testar transferência com sucesso, com saldo insuficiente e para si mesmo
+# [GREEN]    Implementar transferencia_para() com checagens e atualização cruzada
+# [REFACTOR] Adicionar alias transferenciaPara e garantir ausência de efeitos colaterais
 # ==============================================================================
 
-
-def test_transferencia_atualiza_as_duas_contas_e_os_extratos():
+def test_ciclo_10_bonus_transferencia_atualiza_as_duas_contas_e_os_extratos():
     origem = Conta()
     destino = Conta()
     origem.deposito(100)
 
-    origem.transferencia_para(destino, 35)
+    origem.transferenciaPara(destino, 35)
 
     assert origem.saldo == 65
     assert destino.saldo == 35
@@ -234,7 +242,7 @@ def test_transferencia_atualiza_as_duas_contas_e_os_extratos():
     )
 
 
-def test_transferencia_sem_saldo_suficiente_nao_altera_nenhuma_conta():
+def test_ciclo_10_bonus_transferencia_sem_saldo_suficiente_nao_altera_nenhuma_conta():
     origem = Conta()
     destino = Conta()
     origem.deposito(20)
@@ -250,7 +258,7 @@ def test_transferencia_sem_saldo_suficiente_nao_altera_nenhuma_conta():
     assert destino.get_entradas() == extrato_destino
 
 
-def test_transferencia_para_propria_conta_e_recusada_sem_alteracoes():
+def test_ciclo_10_bonus_transferencia_para_propria_conta_e_recusada_sem_alteracoes():
     conta = Conta()
     conta.deposito(50)
     saldo_anterior = conta.saldo
