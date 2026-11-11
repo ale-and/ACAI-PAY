@@ -117,6 +117,7 @@ class Conta:
         """Saca uma quantia positiva e registra a operação no extrato."""
         self._validar_quantia(quantia)  # [CICLO 8 - GREEN] Valida quantia <= 0
 
+        # [CICLO 9 - GREEN/REFACTOR] Validação atômica de saldo insuficiente
         if quantia > self._saldo:
             raise ExcecaoConta("Saldo insuficiente.")
 

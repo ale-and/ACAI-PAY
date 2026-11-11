@@ -28,7 +28,7 @@ O código de teste e de produção foi estruturado com marcações visuais expl�
 | **Ciclo 6** | Saque no Extrato: criação de registro com tipo `"SAQUE"`, valor e saldo após operação | ✅ Documentado & Testado |
 | **Ciclo 7** | Validação: depósito com quantia `<= 0` lança exceção | ✅ Documentado & Testado |
 | **Ciclo 8** | Validação: saque com quantia `<= 0` lança exceção | ✅ Documentado & Testado |
-| **Ciclo 9** | Saldo Insuficiente: saque maior que saldo lança exceção sem efeito colateral | ⏳ Próxima etapa |
+| **Ciclo 9** | Saldo Insuficiente: saque maior que saldo lança exceção sem efeito colateral | ✅ Documentado & Testado |
 | **Ciclo 10** | Bônus: Transferência entre contas com validações e registros cruzados | ⏳ Próxima etapa |
 
 ---

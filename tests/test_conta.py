@@ -191,11 +191,17 @@ def test_ciclo_8_saque_com_quantia_invalida_lanca_excecao(quantia):
 
 
 # ==============================================================================
-# [PRÓXIMOS CICLOS] SALDO INSUFICIENTE E TRANSFERÊNCIA
+# CICLO 9: Saldo Insuficiente no Saque
+# Requisito PDF: "se quantia > saldo atual, a operação deve falhar lançando exceção
+#                 e não pode haver efeito colateral:
+#                 - o saldo deve permanecer o mesmo
+#                 - o extrato não deve receber novo lançamento"
+# [RED]      Testar saque > saldo esperando 'Saldo insuficiente' sem mutações
+# [GREEN]    Verificação if quantia > self._saldo: raise ExcecaoConta("Saldo insuficiente.")
+# [REFACTOR] Garantia de atomicidade (validação prévia sem efeito colateral)
 # ==============================================================================
 
-
-def test_saque_maior_que_saldo_nao_altera_estado():
+def test_ciclo_9_saque_maior_que_saldo_nao_altera_estado():
     conta = Conta()
     conta.deposito(50)
     extrato_anterior = conta.get_entradas()
@@ -203,8 +209,14 @@ def test_saque_maior_que_saldo_nao_altera_estado():
     with pytest.raises(ExcecaoConta, match="Saldo insuficiente"):
         conta.saque(60)
 
+    # Verifica ausência total de efeito colateral
     assert conta.saldo == 50
     assert conta.get_entradas() == extrato_anterior
+
+
+# ==============================================================================
+# [PRÓXIMO CICLO] BÔNUS: TRANSFERÊNCIA ENTRE CONTAS
+# ==============================================================================
 
 
 def test_transferencia_atualiza_as_duas_contas_e_os_extratos():
